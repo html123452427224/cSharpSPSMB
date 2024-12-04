@@ -7,7 +7,7 @@ public class CarRepositoryTests
     {
         //Arrange
         CarModel model = new CarModel("rapid", "skoda");
-        CarRepository carRepo = new CarRepository();
+        CarInMemoryRepository carRepo = new CarInMemoryRepository();
         int oldNumber = carRepo.RecordCount();
 
         //Act
@@ -23,7 +23,7 @@ public class CarRepositoryTests
     public void InsertingNull_ShouldSustainRecordCount()
     {
         //Arrange
-        CarRepository carRepo = new CarRepository();
+        CarInMemoryRepository carRepo = new CarInMemoryRepository();
         int oldNumber = carRepo.RecordCount();
 
         //Act
@@ -38,7 +38,7 @@ public class CarRepositoryTests
     public void GettingAllRecords_WithTwoRecords_ShouldReturnListOfTwoRecords()
     {
         //Arrange
-        CarRepository carRepo = new CarRepository();
+        CarInMemoryRepository carRepo = new CarInMemoryRepository();
         List<CarModel> carList = new List<CarModel>();
         carList.Add(new CarModel("fabia", "skoda"));
         carList.Add(new CarModel("octavia", "skoda"));
@@ -59,7 +59,7 @@ public class CarRepositoryTests
     public void GettingInsertedRecordWithId_WithTwoRecords_ShouldReturnInsertedRecord()
     {
 //Arrange
-        CarRepository carRepo = new CarRepository();
+        CarInMemoryRepository carRepo = new CarInMemoryRepository();
         CarModel model1 = new CarModel("neco", "idk");
         CarModel model2 = new CarModel("ahoj", "ahoj");
 
@@ -79,7 +79,7 @@ public class CarRepositoryTests
     {
         
         //Arrange
-        CarRepository carRepo = new CarRepository();
+        CarInMemoryRepository carRepo = new CarInMemoryRepository();
         CarModel wantedCar = new CarModel("car", "car");
 
         //Act

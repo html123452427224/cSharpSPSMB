@@ -1,6 +1,6 @@
 ﻿namespace InterfacesExample;
 
-public class CarRepository : ICarRepository
+public class CarInMemoryRepository : ICarRepository
 {
     public CarModel? Get(Guid Id)
     {
