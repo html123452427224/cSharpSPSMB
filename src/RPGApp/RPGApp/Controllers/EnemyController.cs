@@ -21,6 +21,14 @@ public class EnemyController : Controller
     {
         return _dbDriver.GetEnemies();
     }
+
+    [HttpPost]
+
+    public Enemy InsertEnemy([FromBody] Enemy enemy)
+    {
+        _dbDriver.InsertEnemy(enemy);
+        return enemy;
+    }
     
     
 }

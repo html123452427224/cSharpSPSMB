@@ -26,7 +26,7 @@ public class DBDriver
     public string Name { get; set; }
     public int Health { get; set; }
     public int  Damage { get; set; }
-    public int Defense { get; set; }
+    public int Armor { get; set; }
     public float CriticalChance { get; set; }
     public float CriticalScaler { get; set; }
 
@@ -40,20 +40,21 @@ public class DBDriver
         {
             connection.Open();
             string query =
-                "INSERT INTO Enemy (ID, name,health , damage, defense, criticalChance, CriticalScaler) VALUES (@ID,@name,@health, @damage, @defense, @criticalChance, @CriticalScaler);";
+                "INSERT INTO Enemy  VALUES (@id,@name,@health, @damage, @armor, @criticalChance, @criticalScaler);";
             MySqlCommand command = new MySqlCommand(query, connection);
-            command.Parameters.AddWithValue("@ID",enemy.ID.ToString() );
+            command.Parameters.AddWithValue("@id",enemy.ID.ToString() );
             command.Parameters.AddWithValue("@name", enemy.Name);
             command.Parameters.AddWithValue("@health", enemy.Health);
             command.Parameters.AddWithValue("@damage", enemy.Damage);
-            command.Parameters.AddWithValue("@defense", enemy.Defense);
+            command.Parameters.AddWithValue("@armor", enemy.Armor);
             command.Parameters.AddWithValue("@criticalChance", enemy.CriticalChance);
-            command.Parameters.AddWithValue("@CriticalScaler", enemy.CriticalScaler);
+            command.Parameters.AddWithValue("@criticalScaler", enemy.CriticalScaler);
             command.ExecuteNonQuery();
         }
         catch (MySqlException ex)
         {
             ThrownException = ex;
+            Console.Error.WriteLine(ex);
         }
 
     }
@@ -79,8 +80,8 @@ public class DBDriver
                     user.Name = reader.GetString("name");
                     user.Health = reader.GetInt32("health");
                     user.Damage = reader.GetInt32("damage");
-                    user.Defense = reader.GetInt32("armor");
-                    user.CriticalChance = reader.GetFloat("criticalChance");
+                    user.Armor = reader.GetInt32("armor");
+                    user.CriticalChance = reader.GetFloat("CriticalChance");
                     user.CriticalScaler = reader.GetFloat("criticalScaler");
                     // add user to the list
                     users.Add(user);
@@ -89,6 +90,7 @@ public class DBDriver
             catch (MySqlException ex)
             {
                 ThrownException = ex;
+                Console.Error.WriteLine(ex.Message);
             }
 
             // return list
