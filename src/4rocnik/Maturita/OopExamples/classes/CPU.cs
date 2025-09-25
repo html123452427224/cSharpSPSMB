@@ -1,6 +1,19 @@
-﻿namespace OopExamples.classes;
+﻿using OopExamples.Interfaces;
 
-public class CPU
+namespace OopExamples.Implementations
 {
-    
+    public class CPU : ICPU
+    {
+        public string Name { get; set; }
+
+        public CPU(string name)
+        {
+            Name = name;
+        }
+
+        public override string ToString()
+        {
+            return $"CPU: {Name}";
+        }
+    }
 }

@@ -1,69 +1,159 @@
-﻿using OopExamples.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using OopExamples.Interfaces;
 
-namespace OopExamples.classes;
-
-public class Computer : IComputer
+namespace OopExamples.Implementations
 {
-    
-    public IEntity Owner { get; init; }
-    public IMotherBoard MotherBoard { get; init; }
-    public ICPU Cpu { get; init; }
-    public IGPU Gpu { get; init; }
-    public IRAM Ram { get; init; }
-    public IPowerSupply PowerSupply { get; init; }
-    public ICase Case { get; init; }
-    public IMonitor[]  Monitors { get; init; }
-    
-    public bool IsOn { get; init; }
-
-    public bool IsPersonalPC { get; }
-
-    public bool IsCompanyPC { get; }
-
-
-    public void PowerUp()
+    public class Computer : IComputer
     {
-        if (IsOn == false)
+        public IEntity Owner { get; private set; }
+        public IMotherBoard MotherBoard { get; private set; }
+        public ICPU Cpu { get; private set; }
+        public IGPU Gpu { get; private set; }
+        public IRAM Ram { get; private set; }
+        public IPowerSupply PowerSupply { get; private set; }
+        public ICase Case { get; private set; }
+        private readonly List<IMonitor> monitors = new();
+
+        public IMonitor[] Monitors => monitors.ToArray();
+
+        public bool IsOn { get; private set; }
+
+        public bool IsPersonalPC => Owner is IPerson;
+        public bool IsCompanyPC => Owner is ICompany;
+
+        public Computer(
+            IMotherBoard motherBoard,
+            ICPU cpu,
+            IGPU gpu,
+            IRAM ram,
+            IPowerSupply powerSupply,
+            ICase pcCase,
+            IEntity owner,
+            IMonitor[]? initialMonitors = null)
         {
-            Console.WriteLine("turning on the computer");
-            
+            MotherBoard = motherBoard ?? throw new ArgumentNullException(nameof(motherBoard));
+            Cpu = cpu ?? throw new ArgumentNullException(nameof(cpu));
+            Gpu = gpu ?? throw new ArgumentNullException(nameof(gpu));
+            Ram = ram ?? throw new ArgumentNullException(nameof(ram));
+            PowerSupply = powerSupply ?? throw new ArgumentNullException(nameof(powerSupply));
+            Case = pcCase ?? throw new ArgumentNullException(nameof(pcCase));
+            Owner = owner ?? throw new ArgumentNullException(nameof(owner));
+
+            if (initialMonitors != null)
+                monitors.AddRange(initialMonitors);
         }
+
         
-    }
-
-    public void ShutDown()
-    {
-        if (IsOn == true)
+        public void PowerUp()
         {
-            Console.WriteLine("shutting down the pc");
+            if (!IsOn)
+            {
+                IsOn = true;
+            }
         }
-        else
+
+        public void ShutDown()
         {
-          Console.WriteLine("the computer isnt on ");  
+            if (IsOn)
+            {
+                IsOn = false;
+            }
         }
-    }
 
-
-    public void PressPowerButton()
-    {
-        if (IsOn == true)
+        public void PressPowerButton()
         {
-            PowerUp();
+            if (IsOn)
+                ShutDown();
+            else
+                PowerUp();
         }
-        else
+
+        public void Print(string text)
         {
-            ShutDown();
+            if (!IsOn)
+            {
+                Console.WriteLine("Computer is off. Cannot print.");
+                return;
+            }
+
+            foreach (var monitor in monitors)
+            {
+                Console.WriteLine($"Printing on monitor {monitor.Name}: {text}");
+            }
         }
-    }
 
+        public float Compute(string equation)
+        {
+            if (!IsOn)
+            {
+                Console.WriteLine("Computer is off. Cannot compute.");
+                return 0;
+            }
 
-    public void Print(string text)
-    {
-        Console.WriteLine(text);
-    }
+            // Very basic example, evaluate only simple equations like "1 + 2"
+            try
+            {
+                var parts = equation.Split(' ');
+                if (parts.Length != 3)
+                    throw new FormatException("Invalid equation format.");
 
-    public float Compute(string equation)
-    {
-        
+                float left = float.Parse(parts[0]);
+                string op = parts[1];
+                float right = float.Parse(parts[2]);
+
+                return op switch
+                {
+                    "+" => left + right,
+                    "-" => left - right,
+                    "*" => left * right,
+                    "/" => right != 0 ? left / right : throw new DivideByZeroException(),
+                    _ => throw new NotSupportedException($"Operator {op} not supported."),
+                };
+            }
+            catch
+            {
+                Console.WriteLine("Failed to compute the equation.");
+                return 0;
+            }
+        }
+
+        public IComputer BuildNewComputer(IComputerConfiguration configuration)
+        {
+            return new Computer(
+                configuration.MotherBoard,
+                configuration.Cpu,
+                configuration.Gpu,
+                configuration.Ram,
+                configuration.PowerSupply,
+                configuration.Case,
+                Owner);
+        }
+
+        public void ChangeOwner(IEntity person)
+        {
+            if (person == null)
+                throw new ArgumentNullException(nameof(person));
+
+            Owner = person;
+        }
+
+        public void RemoveOwner()
+        {
+            Owner = null!;
+        }
+
+        public void AddMonitor(IMonitor monitor)
+        {
+            if (monitor == null) throw new ArgumentNullException(nameof(monitor));
+            if (!monitors.Contains(monitor))
+                monitors.Add(monitor);
+        }
+
+        public void RemoveMonitor(IMonitor monitor)
+        {
+            if (monitor == null) throw new ArgumentNullException(nameof(monitor));
+            monitors.Remove(monitor);
+        }
     }
 }

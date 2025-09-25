@@ -1,6 +1,19 @@
-﻿namespace OopExamples.classes;
+﻿using OopExamples.Interfaces;
 
-public class Component
+namespace OopExamples.Implementations
 {
-    
+    public class Component : IComponent
+    {
+        public string Name { get; set; }
+
+        public Component(string name)
+        {
+            Name = name;
+        }
+
+        public override string ToString()
+        {
+            return $"Component Name: {Name}";
+        }
+    }
 }

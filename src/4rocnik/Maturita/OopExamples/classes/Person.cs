@@ -1,6 +1,19 @@
-﻿namespace OopExamples.classes;
+﻿using OopExamples.Interfaces;
 
-public class Person
+namespace OopExamples.Implementations
 {
-    
+    public class Person : IPerson
+    {
+        public string Name { get; set; }
+
+        public Person(string name)
+        {
+            Name = name;
+        }
+
+        public override string ToString()
+        {
+            return $"Person Name: {Name}";
+        }
+    }
 }
